@@ -8,11 +8,13 @@ ThreadTest::ThreadTest()
 
 void ThreadTest::getThread()
 {
-    std::cout << std::this_thread::get_id() << " waiting for lock\n";
-    std::lock(mutex1, mutex2);
-    std::lock_guard<std::mutex>(mutex2, std::adopt_lock); // 这样这里就不会在上锁一次
-    std::lock_guard<std::mutex>(mutex1, std::adopt_lock);
+    std::unique_lock<std::mutex> uni_lock(mutex1, std::defer_lock);
+    uni_lock.lock();
     std::cout << std::this_thread::get_id() << " got lock\n";
     m_data++;
     std::cout << "now data is " << m_data << std::endl;
+    uni_lock.release(); // 释放后管理权全部归还给mutex1
+                        //  uni_lock.unlock(); // 释放后不起作用
+                        // uni_lock.release()->unlock(); //不能两次释放，释放后必须->unlock()
+    mutex1.unlock();    // 可用
 }
