@@ -1,29 +1,19 @@
 #include "thread_test.h"
-#include <future>
+#include <functional>
 
 int main(int argc, char **argv)
 {
-    std::future<int> ans = std::async(std::launch::deferred, []() -> int
-                                      { return 6; });
+    std::promise<int> myprom;
+    ThreadTest tt;
 
-    ans.wait(); // wait配合deferred是在本线程实现的异步 没有创建线程
-    std::future_status ret = ans.wait_for(std::chrono::seconds(0));
-    // std::cout << ans.get() << std::endl; // 只能调用一次
-    // 多次调用方法如下
-    /*
-    std::shared_future<int> val(std::move(ans));
-    std::cout << val.get() << std::endl;
-    std::cout << val.get() << std::endl;
-    std::cout << val.get() << std::endl;
-    */
-    if (ret == std::future_status::deferred)
-        std::cout << "异步未执行\n";
-    else if (ret == std::future_status::ready)
-        std::cout << "异步执行\n";
-    if (ret == std::future_status::timeout)
-        std::cout << "线程创建了\n";
-    else
-        std::cout << "线程没有创建\n";
+    std::packaged_task<int(std::promise<int> &, int)> func(std::bind(&ThreadTest::getThread, &tt, std::placeholders::_1, std::placeholders::_2));
+
+    std::thread thread1(std::ref(func), std::ref(myprom), 120);
+    thread1.join();
+
+    int value = func.get_future().get();
+    std::cout << "return value " << value << std::endl;
+    std::cout << "get value is " << myprom.get_future().get() << std::endl;
 
     return 0;
 }

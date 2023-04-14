@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <condition_variable>
 #include <iostream>
+#include <future>
 #include <thread>
 #include <mutex>
 
@@ -11,7 +12,7 @@ class ThreadTest
 {
 public:
     ThreadTest();
-    void getThread();
+    int getThread(std::promise<int> &pm, int val);
     void wakeCondition();
 
 private:
