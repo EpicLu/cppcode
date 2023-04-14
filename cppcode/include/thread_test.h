@@ -11,6 +11,7 @@ class ThreadTest
 public:
     ThreadTest();
     void getThread();
+    void test() { std::cout << "test\n"; };
 
 private:
     int m_data;
@@ -18,6 +19,7 @@ private:
     std::mutex m_mutex2;
     std::recursive_mutex m_rmutex; // 递归锁
     std::timed_mutex m_tmutex;     // 时间锁
+    std::once_flag test_flag;
 };
 
 #endif

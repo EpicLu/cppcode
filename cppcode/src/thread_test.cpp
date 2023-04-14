@@ -8,17 +8,8 @@ ThreadTest::ThreadTest()
 
 void ThreadTest::getThread()
 {
-    if (m_tmutex.try_lock_for(std::chrono::seconds(2)))
-    {
-        std::cout << std::this_thread::get_id() << " got lock\n";
-        m_data++;
-        std::cout << "now data is " << m_data << std::endl;
-        sleep(1);
-        m_tmutex.unlock();
-    }
-    else
-    {
-        std::cout << std::this_thread::get_id() << " not got lock\n";
-        std::cout << "now data is " << m_data << std::endl;
-    }
+    std::cout << std::this_thread::get_id() << " got lock\n";
+    std::call_once(test_flag, &ThreadTest::test, this);
+    // m_data++;
+    // std::cout << "now data is " << m_data << std::endl;
 }
