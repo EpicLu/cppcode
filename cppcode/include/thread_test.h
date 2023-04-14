@@ -3,11 +3,17 @@
 
 #include <iostream>
 #include <thread>
+#include <mutex>
 
 class ThreadTest
 {
 public:
+    ThreadTest();
     void getThread();
+
+private:
+    int m_data;
+    std::mutex testMutex;
 };
 
 #endif
