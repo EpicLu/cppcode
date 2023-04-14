@@ -14,7 +14,8 @@ public:
 
 private:
     int m_data;
-    std::mutex testMutex;
+    std::mutex mutex1;
+    std::mutex mutex2;
 };
 
 #endif
