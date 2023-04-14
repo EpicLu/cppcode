@@ -9,8 +9,9 @@ ThreadTest::ThreadTest()
 void ThreadTest::getThread()
 {
     std::cout << "this is " << std::this_thread::get_id() << std::endl;
-    testMutex.lock();
-    m_data++;
-    std::cout << "now data is " << m_data << std::endl;
-    testMutex.unlock();
+    {
+        std::lock_guard<std::mutex> lock(testMutex);
+        m_data++;
+        std::cout << "now data is " << m_data << std::endl;
+    }
 }

@@ -1,6 +1,7 @@
 #ifndef __THREAD_TEST_H__
 #define __THREAD_TEST_H__
 
+#include <unistd.h>
 #include <iostream>
 #include <thread>
 #include <mutex>

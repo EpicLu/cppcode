@@ -2,8 +2,6 @@
 
 int main(int argc, char **argv)
 {
-    std::cout << "hello world!\n";
-
     ThreadTest tt;
 
     for (int i = 0; i < 5; i++)
@@ -12,5 +10,6 @@ int main(int argc, char **argv)
         t.detach();
     }
 
+    sleep(3);
     return 0;
 }
