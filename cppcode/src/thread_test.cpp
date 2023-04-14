@@ -8,12 +8,17 @@ ThreadTest::ThreadTest()
 
 void ThreadTest::getThread()
 {
-    std::lock_guard<std::recursive_mutex> lock1(m_rmutex);
-    std::lock_guard<std::recursive_mutex> lock2(m_rmutex);
-    std::lock_guard<std::recursive_mutex> lock3(m_rmutex);
-    std::lock_guard<std::recursive_mutex> lock4(m_rmutex);
-    std::lock_guard<std::recursive_mutex> lock5(m_rmutex);
-    std::cout << std::this_thread::get_id() << " got lock\n";
-    m_data++;
-    std::cout << "now data is " << m_data << std::endl;
+    if (m_tmutex.try_lock_for(std::chrono::seconds(2)))
+    {
+        std::cout << std::this_thread::get_id() << " got lock\n";
+        m_data++;
+        std::cout << "now data is " << m_data << std::endl;
+        sleep(1);
+        m_tmutex.unlock();
+    }
+    else
+    {
+        std::cout << std::this_thread::get_id() << " not got lock\n";
+        std::cout << "now data is " << m_data << std::endl;
+    }
 }

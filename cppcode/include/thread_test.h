@@ -17,6 +17,7 @@ private:
     std::mutex m_mutex1;
     std::mutex m_mutex2;
     std::recursive_mutex m_rmutex; // 递归锁
+    std::timed_mutex m_tmutex;     // 时间锁
 };
 
 #endif
