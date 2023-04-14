@@ -2,6 +2,7 @@
 #define __THREAD_TEST_H__
 
 #include <unistd.h>
+#include <condition_variable>
 #include <iostream>
 #include <thread>
 #include <mutex>
@@ -11,7 +12,7 @@ class ThreadTest
 public:
     ThreadTest();
     void getThread();
-    void test() { std::cout << "test\n"; };
+    void wakeCondition();
 
 private:
     int m_data;
@@ -20,6 +21,7 @@ private:
     std::recursive_mutex m_rmutex; // 递归锁
     std::timed_mutex m_tmutex;     // 时间锁
     std::once_flag test_flag;
+    std::condition_variable condition; // 条件变量
 };
 
 #endif
