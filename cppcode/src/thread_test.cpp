@@ -8,13 +8,12 @@ ThreadTest::ThreadTest()
 
 void ThreadTest::getThread()
 {
-    std::unique_lock<std::mutex> uni_lock(mutex1, std::defer_lock);
-    uni_lock.lock();
+    std::lock_guard<std::recursive_mutex> lock1(m_rmutex);
+    std::lock_guard<std::recursive_mutex> lock2(m_rmutex);
+    std::lock_guard<std::recursive_mutex> lock3(m_rmutex);
+    std::lock_guard<std::recursive_mutex> lock4(m_rmutex);
+    std::lock_guard<std::recursive_mutex> lock5(m_rmutex);
     std::cout << std::this_thread::get_id() << " got lock\n";
     m_data++;
     std::cout << "now data is " << m_data << std::endl;
-    uni_lock.release(); // 释放后管理权全部归还给mutex1
-                        //  uni_lock.unlock(); // 释放后不起作用
-                        // uni_lock.release()->unlock(); //不能两次释放，释放后必须->unlock()
-    mutex1.unlock();    // 可用
 }

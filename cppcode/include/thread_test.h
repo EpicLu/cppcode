@@ -14,8 +14,9 @@ public:
 
 private:
     int m_data;
-    std::mutex mutex1;
-    std::mutex mutex2;
+    std::mutex m_mutex1;
+    std::mutex m_mutex2;
+    std::recursive_mutex m_rmutex; // 递归锁
 };
 
 #endif
