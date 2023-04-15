@@ -1,5 +1,5 @@
 #cpp
-project(cppstudy)
+project(server)
 
 # 配置构建类型
 #set(CMAKE_BUILD_TYPE Release)
@@ -22,13 +22,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 # 设置可执行文件名
 set(TARGET main)
 # 设置库名
-#set(PROJECT_LINK_LIBS threadpool http)
+set(PROJECT_LINK_LIBS threadpool)
 
 # 设置头文件目录
 include_directories(include)
 
 # 设置源文件目录 使用GLOB可使用wilecard来获取源文件
-#file(GLOB _SOURCES "src/*.cpp")
+#file(GLOB THREADPOOL_SOURCES "src/*.cpp")
+set(THREADPOOL_SOURCES "src/threadpool.cpp" "src/task.cpp")
 set(MAIN_SOURCES "src/main.cpp")
 
 # 制作静态库 如果动态库已经使用过的名字静态库不能在add_library中使用 可用设置版本指令修改名字
@@ -39,8 +40,8 @@ set(MAIN_SOURCES "src/main.cpp")
 #SET_TARGET_PROPERTIES(event_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 
 # 制作动态库
-#add_library(event SHARED ${EVENT_SOURCES})
-#SET_TARGET_PROPERTIES(event PROPERTIES VERSION 1.2 SOVERSION 1) # 设置动态库版本
+add_library(threadpool SHARED ${THREADPOOL_SOURCES})
+SET_TARGET_PROPERTIES(threadpool PROPERTIES VERSION 1.0 SOVERSION 1) # 设置动态库版本
 
 message(${PROJECT_LINK_LIBS})
 
@@ -49,7 +50,7 @@ add_executable(${TARGET} ${MAIN_SOURCES})
  
 # 生成可执行文件main，需要把连接库给带上，添加库文件名不需要指定文件路径，cmake会自己找
 #target_link_libraries(slave PUBLIC event)
-#target_link_libraries(${TARGET} ${PROJECT_LINK_LIBS}) 
+target_link_libraries(${TARGET} ${PROJECT_LINK_LIBS}) 
 
 #set the location for library installation --i.e.
 #/usr/lib in this case
