@@ -6,18 +6,13 @@
 class Task
 {
 public:
-    Task() = default;
-    Task(const Task &t) = default;
-    Task(Task &&t) = default;
     template <typename F, typename... Args>
-    Task(F &&f, Args &&...args);
+    Task(F &&f, Args &&...args); // 初始化任务
 
-    void run();
-
-    ~Task() = default;
+    void run(); // 运行函数
 
 private:
-    std::function<void()> func;
+    std::function<void()> func; // 包装工作函数
 };
 
 #endif // _TASK_H_

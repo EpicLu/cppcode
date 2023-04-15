@@ -1,9 +1,7 @@
-#include <iostream>
-#define cout std::cout
+#include "threadpool.h"
 
 int main(int argc, char **argv)
 {
-    cout << "hello world!\n";
 
     return 0;
 }

@@ -11,23 +11,22 @@
 class ThreadPool
 {
 public:
-    ThreadPool() = default;
     ThreadPool(const ThreadPool &pool) = delete;
     ThreadPool(ThreadPool &&pool) = delete;
-    ThreadPool(int min_threads, int max_threads, int min_tasks);
+    ThreadPool(int min_threads, int max_threads, int min_tasks); // 初始化线程池
 
     template <typename F, typename... Args>
-    bool addTask(F &&f, Args &&...args);
+    bool addTask(F &&f, Args &&...args); // 添加任务到队列中
 
-    ~ThreadPool();
+    ~ThreadPool(); // 回收所有线程销毁线程池
 
 private:
-    void createThread();
-    void work();
+    void createThread(); // 创建线程
+    void work();         // 线程工作函数
 
-    int m_min_threads;
-    int m_max_threads;
-    int m_min_tasks;
+    int m_min_threads; // 最小线程数
+    int m_max_threads; // 最大线程数
+    int m_min_tasks;   // 最少任务数
     bool m_stop;
     int m_cur_threads;                   // 当前线程数目
     int m_idle_threads;                  // 空闲线程数目
