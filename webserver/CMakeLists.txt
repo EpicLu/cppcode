@@ -22,7 +22,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 # 设置可执行文件名
 set(TARGET main)
 # 设置库名
-set(PROJECT_LINK_LIBS threadpool reactor)
+set(PROJECT_LINK_LIBS webserver)
 
 # 设置头文件目录
 include_directories(include)
@@ -31,6 +31,7 @@ include_directories(include)
 #file(GLOB THREADPOOL_SOURCES "src/*.cpp")
 set(REACTOR_SOURCES "src/reactor.cpp" "src/httphandler.cpp")
 set(THREADPOOL_SOURCES "src/threadpool.cpp" "src/task.cpp")
+set(WEBSERVER_SOURCES "src/webserver.cpp")
 set(MAIN_SOURCES "src/main.cpp")
 
 # 制作静态库 如果动态库已经使用过的名字静态库不能在add_library中使用 可用设置版本指令修改名字
@@ -45,6 +46,8 @@ add_library(threadpool SHARED ${THREADPOOL_SOURCES})
 SET_TARGET_PROPERTIES(threadpool PROPERTIES VERSION 1.0 SOVERSION 1) # 设置动态库版本
 add_library(reactor SHARED ${REACTOR_SOURCES})
 SET_TARGET_PROPERTIES(reactor PROPERTIES VERSION 1.0 SOVERSION 1) # 设置动态库版本
+add_library(webserver SHARED ${WEBSERVER_SOURCES})
+SET_TARGET_PROPERTIES(webserver PROPERTIES VERSION 1.0 SOVERSION 1) # 设置动态库版本
 
 message(${PROJECT_LINK_LIBS})
 
@@ -52,7 +55,9 @@ message(${PROJECT_LINK_LIBS})
 add_executable(${TARGET} ${MAIN_SOURCES})	
  
 # 生成可执行文件main，需要把连接库给带上，添加库文件名不需要指定文件路径，cmake会自己找
-#target_link_libraries(slave PUBLIC event)
+target_link_libraries(reactor INTERFACE threadpool)
+target_link_libraries(webserver PUBLIC threadpool)
+target_link_libraries(webserver PUBLIC reactor)
 target_link_libraries(${TARGET} ${PROJECT_LINK_LIBS}) 
 
 #set the location for library installation --i.e.

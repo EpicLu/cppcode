@@ -2,6 +2,7 @@
 #define _EVENTHANDLER_H_
 
 #include <stdint.h>
+#include "threadpool.h"
 
 class EventHandler // 创建子类实现虚函数 子类可以是处理TCP的也可以是处理UDP的
 {
