@@ -11,17 +11,15 @@ class HTTPHandler : public EventHandler
 public:
     HTTPHandler(ThreadPool *pool);
 
-    void handleEvent(int fd, uint32_t events) override;          // 将对应的回调函数添加到线程池中
-    std::string getLine(int fd);                                 // 获取HTTP请求报文的行
-    void createMessage(int no, std::string status, u_long size); // 生成HTTP应答报文
-    void sendMessage();                                          // 发送HTTP应答报文
-    void recvEvent(int fd);                                      // 读事件的回调函数
-    void sendFile(int fd);                                       // 写事件的回调函数
+    void handleEvent(int fd, uint32_t events) override;                // 将对应的回调函数添加到线程池中
+    std::string getLine(int fd);                                       // 获取HTTP请求报文的行
+    void sendMessage(int fd, int no, std::string status, u_long size); // 生成HTTP应答报文                                      // 发送HTTP应答报文
+    void recvEvent(int fd);                                            // 读事件的回调函数
+    void sendFile(int fd);                                             // 写事件的回调函数
 
 private:
     ThreadPool *m_pool;
     std::string m_filename; // 要发送的文件名
-    std::string m_msg;
 };
 
 #endif // _HTTPHANDLER_H_

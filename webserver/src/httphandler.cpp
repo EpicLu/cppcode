@@ -4,7 +4,6 @@ HTTPHandler::HTTPHandler(ThreadPool *pool)
 {
     m_pool = pool;
     m_filename = "";
-    m_msg = "";
 }
 
 void HTTPHandler::handleEvent(int fd, uint32_t events)
@@ -54,20 +53,24 @@ std::string HTTPHandler::getLine(int fd)
     return line;
 }
 
-void HTTPHandler::createMessage(int no, std::string status, u_long size)
+void HTTPHandler::sendMessage(int fd, int no, std::string status, u_long size)
 {
+    std::string msg = "";
+
     // 应答报文首行
-    m_msg += "HTTP/1.1 ";
-    m_msg += std::to_string(no);
-    m_msg += " ";
-    m_msg += status;
-    m_msg += "\r\n";
+    msg += "HTTP/1.1 ";
+    msg += std::to_string(no);
+    msg += " ";
+    msg += status;
+    msg += "\r\n";
     // 应答报文第二行
-    m_msg += "Content-Length: ";
-    m_msg += std::to_string(size);
-    m_msg += "\r\n";
+    msg += "Content-Length: ";
+    msg += std::to_string(size);
+    msg += "\r\n";
     // 第三行
-    m_msg += "Connection: close\r\n";
+    msg += "Connection: close\r\n";
     // 末行为空行
-    m_msg += "\r\n";
+    msg += "\r\n";
+
+    int ret = send(fd, msg.data(), msg.size(), 0);
 }
