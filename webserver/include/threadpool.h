@@ -28,13 +28,12 @@ private:
     int m_max_threads; // 最大线程数
     int m_max_tasks;   // 最大任务数
     bool m_stop;
-    int m_cur_threads;                   // 当前线程数目
-    int m_idle_threads;                  // 空闲线程数目
-    std::queue<Task> tasks;              // 任务队列
-    std::vector<std::thread> threads;    // 线程列表
-    std::mutex mutex;                    // 互斥锁，保护任务队列和线程数目
-    std::condition_variable cond_task;   // 条件变量，用于通知有新的任务到来
-    std::condition_variable cond_thread; // 条件变量，用于通知有多余的线程可以退出
+    int m_cur_threads;                 // 当前线程数目
+    int m_idle_threads;                // 空闲线程数目
+    std::queue<Task> tasks;            // 任务队列
+    std::vector<std::thread> threads;  // 线程列表
+    std::mutex mutex;                  // 互斥锁，保护任务队列和线程数目
+    std::condition_variable cond_task; // 条件变量，用于通知有新的任务到来
 };
 
 #endif // _THREADPOOL_H_

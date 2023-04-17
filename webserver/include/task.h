@@ -6,6 +6,7 @@
 class Task
 {
 public:
+    Task() = default;
     template <typename F, typename... Args>
     Task(F &&f, Args &&...args); // 初始化任务
 
