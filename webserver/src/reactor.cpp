@@ -55,7 +55,7 @@ void Reactor::handleEvent()
             uint32_t events = m_events[i].events;
             auto handler = m_handlers[fd];
             if (handler)
-                handler->handleEvent(fd, events, this); // 调用EventHandler类中的函数，此函数调用对应事件的回调函数
+                handler->handleEvent(fd, events); // 调用EventHandler类中的函数，此函数调用对应事件的回调函数
         }
     }
 }
