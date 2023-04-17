@@ -28,3 +28,13 @@ void Reactor::addHandler(EventHandler &handler, int fd, uint32_t events)
     }
     handlers[fd] = handler;
 }
+
+void Reactor::delHandler(int fd)
+{
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1)
+    {
+        std::cerr << "Failed to remove file descriptor from epoll\n";
+        exit(1);
+    }
+    handlers.erase(fd);
+}
