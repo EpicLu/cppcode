@@ -12,7 +12,7 @@ public:
     HTTPHandler(ThreadPool *pool);
 
     void handleEvent(int fd, uint32_t events) override; // 将对应的回调函数添加到线程池中
-    int getLine();                                      // 获取HTTP请求报文的行
+    std::string getLine(int fd);                        // 获取HTTP请求报文的行
     std::string createMessage();                        // 生成HTTP应答报文
     void sendMessage(std::string msg);                  // 发送HTTP应答报文
     void recvEvent(int fd);                             // 读事件的回调函数

@@ -6,6 +6,7 @@
 #include <map>
 #include <functional>
 #include <sys/epoll.h>
+#include <sys/socket.h>
 #include <unistd.h>
 #include "httphandler.h"
 
