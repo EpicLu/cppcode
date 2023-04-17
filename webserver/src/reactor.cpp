@@ -10,3 +10,8 @@ Reactor::Reactor()
         exit(1);
     }
 }
+
+Reactor::~Reactor()
+{
+    close(epoll_fd); // 关闭红黑树
+}
