@@ -11,12 +11,12 @@ void HTTPHandler::handleEvent(int fd, uint32_t events)
     if (events & EPOLLIN)
     {
         // 将读回调函数加入线程池的工作线程
-        m_pool->addTask(recvEvent, fd);
+        m_pool->addTask(&HTTPHandler::recvEvent, this, fd);
     }
     if (events & EPOLLOUT)
     {
         // 将写回调函数加入线程池的工作线程
-        m_pool->addTask(sendFile, fd);
+        m_pool->addTask(&HTTPHandler::sendFile, this, fd);
     }
     if (events & (EPOLLERR | EPOLLHUP))
     {
@@ -73,4 +73,12 @@ void HTTPHandler::sendMessage(int fd, int no, std::string status, u_long size)
     msg += "\r\n";
 
     int ret = send(fd, msg.data(), msg.size(), 0);
+}
+
+void HTTPHandler::recvEvent(int fd)
+{
+}
+
+void HTTPHandler::sendFile(int fd)
+{
 }
