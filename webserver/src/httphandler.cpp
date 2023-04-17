@@ -79,6 +79,7 @@ void HTTPHandler::sendMessage(int fd, int no, std::string status, u_long size)
 
 void HTTPHandler::recvEvent(int fd, Reactor *ptr)
 {
+    ptr->delHandler(fd); // 先不监听此事件
 
     std::string first = getLine(fd);
     std::string methos = "";
@@ -100,6 +101,7 @@ void HTTPHandler::recvEvent(int fd, Reactor *ptr)
         m_filename = first.substr(pos + 1, first.find(" ", pos + 1) - pos - 1); // 第一个空格与第二个空格间
         m_filename = m_filename.substr(m_filename.find_first_of('/') + 1);      // 去掉开头的斜杠
         std::cout << "methos = " << methos << " file = " << m_filename << std::endl;
+        ptr->addHandler(this, fd, EPOLLOUT | EPOLLET); // 改成写事件重新挂回树上监听
     }
     else if (methos == "POST")
     {
