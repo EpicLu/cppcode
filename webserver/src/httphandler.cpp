@@ -45,10 +45,12 @@ std::string HTTPHandler::getLine(int fd)
             }
             line += c;
         }
-        else
+        else if (n == 0)
             c = '\n';
+        else
+            return "";
     }
-    line += '\0';
+    line += "\0";
 
     return line;
 }
@@ -77,6 +79,32 @@ void HTTPHandler::sendMessage(int fd, int no, std::string status, u_long size)
 
 void HTTPHandler::recvEvent(int fd)
 {
+
+    std::string first = getLine(fd);
+    std::string methos = "";
+
+    while (getLine(fd) != "\n") // 把缓冲区数据读完
+        ;
+
+    if (first == "")
+    {
+        std::cerr << "Failed to recv msg\n";
+        return;
+    }
+
+    size_t pos = first.find_first_of(" ");
+    methos = first.substr(0, pos); // 第一个空格前
+    if (methos == "GET")
+    {
+        // GET事件处理
+        m_filename = first.substr(pos + 1, first.find(" ", pos + 1) - pos - 1); // 第一个空格与第二个空格间
+        m_filename = m_filename.substr(m_filename.find_first_of('/') + 1);      // 去掉开头的斜杠
+        std::cout << "methos = " << methos << " file = " << m_filename << std::endl;
+    }
+    else if (methos == "POST")
+    {
+        // POST事件处理
+    }
 }
 
 void HTTPHandler::sendFile(int fd)
