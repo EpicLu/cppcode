@@ -21,10 +21,10 @@ public:
     ~Reactor();
 
 private:
-    int epoll_fd;                           // epoll实例的文件描述符
-    std::map<int, EventHandler *> handlers; // 文件描述符到事件处理器的映射
-    static const int MAX_EVENTS = 16;       // 每次等待的最大事件数
-    struct epoll_event events[MAX_EVENTS];  // 用于存储等待的事件
+    int epoll_fd;                          // epoll实例的文件描述符
+    std::map<int, EventHandler> handlers;  // 文件描述符到事件处理器的映射
+    static const int MAX_EVENTS = 16;      // 每次等待的最大事件数
+    struct epoll_event events[MAX_EVENTS]; // 用于存储等待的事件
 };
 
 #endif // _REACTOR_H_
