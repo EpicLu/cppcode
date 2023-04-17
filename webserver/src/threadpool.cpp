@@ -40,12 +40,12 @@ bool ThreadPool::addTask(F &&f, Args &&...args)
     // 上锁，保护任务队列和线程数目
     std::unique_lock<std::mutex> lock(mutex);
     // 判断任务队列是否已满
-    if (tasks.size() >= max_tasks)
+    if (tasks.size() >= m_max_tasks)
         return false; // 任务队列已满，添加失败
     tasks.push(std::move(task));
     // 判断是否需要创建新的线程
-    if (idle_threads == 0 && cur_threads < max_threads)
-        create_thread(); // 创建新的线程
+    if (m_idle_threads == 0 && m_cur_threads < m_max_threads)
+        createThread(); // 创建新的线程
     // 唤醒一个等待的线程
     lock.unlock();
     cond_task.notify_one();
