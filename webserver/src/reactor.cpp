@@ -36,7 +36,6 @@ void Reactor::delHandler(int fd)
         std::cerr << "Failed to remove file descriptor from epoll\n";
         exit(1);
     }
-    delete m_handlers[fd]; // 防止内存泄露
     m_handlers.erase(fd);
 }
 
