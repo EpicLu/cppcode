@@ -26,7 +26,7 @@ private:
 
     int m_min_threads; // 最小线程数
     int m_max_threads; // 最大线程数
-    int m_min_tasks;   // 最少任务数
+    int m_max_tasks;   // 最大任务数
     bool m_stop;
     int m_cur_threads;                   // 当前线程数目
     int m_idle_threads;                  // 空闲线程数目
