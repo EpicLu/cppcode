@@ -6,17 +6,17 @@ HTTPHandler::HTTPHandler(ThreadPool *pool)
     m_filename = "";
 }
 
-void HTTPHandler::handleEvent(int fd, uint32_t events)
+void HTTPHandler::handleEvent(int fd, uint32_t events, Reactor *ptr)
 {
     if (events & EPOLLIN)
     {
         // 将读回调函数加入线程池的工作线程
-        m_pool->addTask(&HTTPHandler::recvEvent, this, fd);
+        m_pool->addTask(&HTTPHandler::recvEvent, this, fd, ptr);
     }
     if (events & EPOLLOUT)
     {
         // 将写回调函数加入线程池的工作线程
-        m_pool->addTask(&HTTPHandler::sendFile, this, fd);
+        m_pool->addTask(&HTTPHandler::sendFile, this, fd, ptr);
     }
     if (events & (EPOLLERR | EPOLLHUP))
     {
@@ -77,7 +77,7 @@ void HTTPHandler::sendMessage(int fd, int no, std::string status, u_long size)
     int ret = send(fd, msg.data(), msg.size(), 0);
 }
 
-void HTTPHandler::recvEvent(int fd)
+void HTTPHandler::recvEvent(int fd, Reactor *ptr)
 {
 
     std::string first = getLine(fd);
@@ -107,6 +107,6 @@ void HTTPHandler::recvEvent(int fd)
     }
 }
 
-void HTTPHandler::sendFile(int fd)
+void HTTPHandler::sendFile(int fd, Reactor *ptr)
 {
 }
