@@ -14,9 +14,9 @@ class Reactor
 public:
     Reactor(); // 创建红黑书 初始化红黑树根
 
-    void addHandler(EventHandler &&handler, int fd, uint32_t events); // 将事件挂到树上
-    void delHandler(int fd);                                          // 将事件从红黑树中摘除
-    void handleEvent();                                               // 监听事件
+    void addHandler(EventHandler &handler, int fd, uint32_t events); // 将事件挂到树上
+    void delHandler(int fd);                                         // 将事件从红黑树中摘除
+    void handleEvent();                                              // 监听事件
 
     ~Reactor();
 
