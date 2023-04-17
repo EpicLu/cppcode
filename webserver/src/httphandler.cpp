@@ -27,7 +27,7 @@ std::string HTTPHandler::getLine(int fd)
 {
     std::string line = "";
     char c = '\0';
-    int n;
+    int n = 0;
 
     while (c != '\n')
     {
