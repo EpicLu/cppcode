@@ -11,6 +11,7 @@
 class ThreadPool
 {
 public:
+    ThreadPool() = default;
     ThreadPool(const ThreadPool &pool) = delete;
     ThreadPool(ThreadPool &&pool) = delete;
     ThreadPool(int min_threads, int max_threads, int min_tasks); // 初始化线程池

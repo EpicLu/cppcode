@@ -9,7 +9,7 @@
 class HTTPHandler : public EventHandler
 {
 public:
-    HTTPHandler(const ThreadPool &pool);
+    HTTPHandler(ThreadPool *pool);
 
     void handleEvent(int fd, uint32_t events) override; // 将对应的回调函数添加到线程池中
     int getLine();                                      // 获取HTTP请求报文的行
@@ -19,7 +19,7 @@ public:
     void sendFile(int fd);                              // 写事件的回调函数
 
 private:
-    ThreadPool m_pool;
+    ThreadPool *m_pool;
     std::string m_filename; // 要发送的文件名
 };
 
