@@ -16,7 +16,7 @@ Reactor::~Reactor()
     close(epoll_fd); // 关闭红黑树
 }
 
-void Reactor::addHandler(EventHandler &handler, int fd, uint32_t events)
+void Reactor::addHandler(EventHandler *handler, int fd, uint32_t events)
 {
     struct epoll_event event;
     event.data.fd = fd;
@@ -26,7 +26,7 @@ void Reactor::addHandler(EventHandler &handler, int fd, uint32_t events)
         std::cerr << "Failed to add file descriptor to epoll\n";
         exit(1);
     }
-    handlers[fd] = handler;
+    m_handlers[fd] = handler;
 }
 
 void Reactor::delHandler(int fd)
@@ -36,5 +36,27 @@ void Reactor::delHandler(int fd)
         std::cerr << "Failed to remove file descriptor from epoll\n";
         exit(1);
     }
-    handlers.erase(fd);
+    delete m_handlers[fd]; // 防止内存泄露
+    m_handlers.erase(fd);
+}
+
+void Reactor::handleEvent()
+{
+    while (1)
+    {
+        int ret = epoll_wait(epoll_fd, m_events, MAX_EVENTS, 0);
+        if (ret == -1)
+        {
+            std::cerr << "Failed to wait for epoll events\n";
+            exit(1);
+        }
+        for (int i = 0; i < ret; i++)
+        {
+            int fd = m_events[i].data.fd;
+            uint32_t events = m_events[i].events;
+            auto handler = m_handlers[fd];
+            if (handler)
+                handler->handleEvent(fd, events); // 调用EventHandler类中的函数，此函数调用对应事件的回调函数
+        }
+    }
 }
