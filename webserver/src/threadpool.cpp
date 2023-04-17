@@ -32,26 +32,6 @@ ThreadPool::~ThreadPool()
     }
 }
 
-template <typename F, typename... Args>
-bool ThreadPool::addTask(F &&f, Args &&...args)
-{
-    // 创建一个任务对象
-    Task task(std::forward<F>(f), std::forward<Args>(args)...);
-    // 上锁，保护任务队列和线程数目
-    std::unique_lock<std::mutex> lock(mutex);
-    // 判断任务队列是否已满
-    if (tasks.size() >= m_max_tasks)
-        return false; // 任务队列已满，添加失败
-    tasks.push(std::move(task));
-    // 判断是否需要创建新的线程
-    if (m_idle_threads == 0 && m_cur_threads < m_max_threads)
-        createThread(); // 创建新的线程
-    // 唤醒一个等待的线程
-    lock.unlock();
-    cond_task.notify_one();
-    return true; // 添加成功
-}
-
 void ThreadPool::createThread()
 {
     // 创建一个线程对象，传入work函数作为线程函数
@@ -74,13 +54,11 @@ void ThreadPool::work()
         // 判断线程池是否关闭
         if (m_stop)
             break;
-        if (tasks.empty())
-        {
-            // 等待任务
-            cond_task.wait(lock);
-            if (m_stop)
-                break;
-        }
+        while (tasks.empty())     // 不使用if使用while 防止没任务的时候也跳出判断
+            cond_task.wait(lock); // 等待任务
+        // 判断线程池是否关闭
+        if (m_stop)
+            break;
         // 判断是否需要销毁多余的线程
         if (m_cur_threads > m_min_threads)
         {

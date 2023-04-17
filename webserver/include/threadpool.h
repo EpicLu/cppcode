@@ -16,7 +16,24 @@ public:
     ThreadPool(int min_threads, int max_threads, int min_tasks); // 初始化线程池
 
     template <typename F, typename... Args>
-    bool addTask(F &&f, Args &&...args); // 添加任务到队列中
+    bool addTask(F &&f, Args &&...args) // 添加任务到队列中 模板函数不可份文件定义
+    {
+        // 创建一个任务对象
+        Task task(std::forward<F>(f), std::forward<Args>(args)...);
+        // 上锁，保护任务队列和线程数目
+        std::unique_lock<std::mutex> lock(mutex);
+        // 判断任务队列是否已满
+        if (tasks.size() >= m_max_tasks)
+            return false; // 任务队列已满，添加失败
+        tasks.push(std::move(task));
+        // 判断是否需要创建新的线程
+        if (m_idle_threads == 0 && m_cur_threads < m_max_threads)
+            createThread(); // 创建新的线程
+        // 唤醒一个等待的线程
+        lock.unlock();
+        cond_task.notify_one();
+        return true; // 添加成功
+    }
 
     ~ThreadPool(); // 回收所有线程销毁线程池
 

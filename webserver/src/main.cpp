@@ -1,15 +1,20 @@
-#include "threadpool.h"
+#include "webserver.h"
 
-void print(int val)
+void print()
 {
-    std::cout << "this is " << val << std::endl;
+    std::cout << "this is " << std::this_thread::get_id() << std::endl;
+}
+
+void runpool()
+{
+    ThreadPool t(4, 8, 4);
+    for (int i = 1; i <= 3; i++)
+        t.addTask(print);
 }
 
 int main(int argc, char **argv)
 {
-    ThreadPool t(8, 16, 8);
-    for (int i; i < 3; i++)
-        t.addTask(print, i);
+    runpool();
 
     return 0;
 }
