@@ -15,3 +15,45 @@ WebServer::WebServer(int min_threads, int max_threads, int max_tasks)
         exit(1);
     }
 }
+
+void WebServer::initSocket(int port)
+{
+    int ret, i;
+    int opt = 1;
+    struct sockaddr_in sin = {0};
+
+    int lfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (lfd == -1)
+    {
+        std::cerr << "socket error!\n";
+        exit(1);
+    }
+    ret = fcntl(lfd, F_SETFL, O_NONBLOCK); // 将socket设为非阻塞
+    if (ret == -1)
+    {
+        std::cerr << "fcntl error!\n";
+        exit(1);
+    }
+
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = INADDR_ANY;
+    sin.sin_port = htons(port);
+
+    ret = setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // 端口复用
+
+    ret = bind(lfd, (struct sockaddr *)&sin, sizeof(sin));
+    if (ret == -1)
+    {
+        std::cerr << "bind error!\n";
+        exit(1);
+    }
+
+    ret = listen(lfd, MAX_EVENTS);
+    if (ret == -1)
+    {
+        std::cerr << "listen error!\n";
+        exit(1);
+    }
+
+    m_reactor->addHandler(new HTTPHandler(m_pool, m_reactor), lfd, EPOLLIN | EPOLLET);
+}
