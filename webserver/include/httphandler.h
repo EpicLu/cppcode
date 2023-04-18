@@ -16,7 +16,8 @@ public:
     void handleEvent(int &fd, uint32_t &events) override; // 将对应的回调函数添加到线程池中
     std::string getLine(int &fd);                         // 获取HTTP请求报文的行
     std::string getType(const std::string filename);
-    void sendMessage(int &fd, int no, std::string status, u_long size); // 生成HTTP应答报文                                      // 发送HTTP应答报文
+    void sendMessage(int &fd, int no, std::string status, u_long size); // 生成HTTP应答报文
+    void sendErr(int &fd);                                              // 发送404页面
     void recvEvent(int &fd);                                            // 读事件的回调函数
     void sendFile(int &fd);                                             // 写事件的回调函数
     void acceptConn();

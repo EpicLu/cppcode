@@ -161,8 +161,9 @@ void HTTPHandler::sendFile(int &fd)
     {
         std::cerr << "stat file error\n";
         // 发送404页面
-        // sendMessage(fd, 404, "Not Found", sbuf.st_size);
-        // sendFile(m_filename);
+        ret = stat("404.html", &sbuf);
+        sendMessage(fd, 404, "Not Found", sbuf.st_size);
+        sendErr(fd);
         close(fd);
         // delete this
         return;
@@ -289,4 +290,31 @@ std::string HTTPHandler::getType(const std::string filename)
         return "video/mp4";
 
     return "text/plain; charset=utf-8";
+}
+
+void HTTPHandler::sendErr(int &fd)
+{
+    std::ifstream ifs;
+    ifs.open("404.html", std::ios::in);
+    int ret = 0;
+
+    char buf[BUFSIZ] = {0};
+    while (ifs.read(buf, sizeof(buf)))
+    {
+    tryagain:
+        ret = send(fd, buf, strlen(buf), 0);
+        std::cout << "send file size: " << ret << std::endl;
+        if (ret == -1)
+        {
+            if (ret == EAGAIN || ret == EINTR) // 阻塞状态不算发送错误
+                goto tryagain;
+            else
+            {
+                std::cerr << "send file error\n";
+                break;
+            }
+        }
+    }
+
+    ifs.close();
 }
