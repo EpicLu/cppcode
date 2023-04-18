@@ -7,7 +7,7 @@
 class WebServer
 {
 public:
-    WebServer(int min_threads, int max_threads, int min_tasks); // 实例化reactor和线程池
+    WebServer(int min_threads, int max_threads, int max_tasks); // 实例化reactor和线程池
 
     int initSocket();   // 完成socket，bind，listen 返回lfd
     void listenEvent(); // 监听客户端 将监听到的客户端设置为读事件 挂到红黑树上
@@ -17,7 +17,7 @@ public:
 
 private:
     ThreadPool *m_pool;
-    Reactor *m_reacotr;
+    Reactor *m_reactor;
 };
 
 #endif // _WEBSERVER_H_

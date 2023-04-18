@@ -14,7 +14,7 @@ public:
     ThreadPool() = default;
     ThreadPool(const ThreadPool &pool) = delete;
     ThreadPool(ThreadPool &&pool) = delete;
-    ThreadPool(int min_threads, int max_threads, int min_tasks); // 初始化线程池
+    explicit ThreadPool(int min_threads, int max_threads, int max_tasks); // 初始化线程池
 
     template <typename F, typename... Args>
     bool addTask(F &&f, Args &&...args) // 添加任务到队列中 模板函数不可份文件定义
