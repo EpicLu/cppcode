@@ -94,10 +94,14 @@ void HTTPHandler::sendMessage(int &fd, int no, std::string status, u_long size)
     msg += status;
     msg += "\r\n";
     // 应答报文第二行
+    msg += "Content-Type: ";
+    msg += getType(m_filename);
+    msg += "\r\n";
+    // 第三行
     msg += "Content-Length: ";
     msg += std::to_string(size);
     msg += "\r\n";
-    // 第三行
+    // 第...行
     msg += "Connection: close\r\n";
     // 末行为空行
     msg += "\r\n";
@@ -230,4 +234,59 @@ void HTTPHandler::acceptConn()
 
     // printf("new connect[%s:%d],[time:%ld],pos[%d]\n\n", inet_ntoa(cin.sin_addr), ntohs(cin.sin_port), g_hev[i].mev.last_active, i);
     return;
+}
+
+std::string HTTPHandler::getType(const std::string filename)
+{
+    std::string dot = "";
+    dot = filename.substr(filename.find_last_of("."));
+
+    if (dot == "")
+        return "text/plain; charset=utf-8";
+    if (dot.compare(".html") == 0 || dot.compare(".htm") == 0)
+        return "text/html; charset=utf-8";
+    if (dot.compare(".jpg") == 0 || dot.compare(".jpeg") == 0)
+        return "image/jpeg";
+    if (dot.compare(".gif") == 0)
+        return "image/gif";
+    if (dot.compare(".png") == 0)
+        return "image/png";
+    if (dot.compare(".css") == 0)
+        return "text/css";
+    if (dot.compare(".au") == 0)
+        return "audio/basic";
+    if (dot.compare(".wav") == 0)
+        return "audio/wav";
+    if (dot.compare(".avi") == 0)
+        return "video/x-msvideo";
+    if (dot.compare(".mov") == 0 || dot.compare(".qt") == 0)
+        return "video/quicktime";
+    if (dot.compare(".mpeg") == 0 || dot.compare(".mpe") == 0)
+        return "video/mpeg";
+    if (dot.compare(".vrml") == 0 || dot.compare(".wrl") == 0)
+        return "model/vrml";
+    if (dot.compare(".midi") == 0 || dot.compare(".mid") == 0)
+        return "audio/midi";
+    if (dot.compare(".mp3") == 0)
+        return "audio/mpeg";
+    if (dot.compare(".ogg") == 0)
+        return "application/ogg";
+    if (dot.compare(".pac") == 0)
+        return "application/x-ns-proxy-autoconfig";
+    if (dot.compare(".tof") == 0 || dot.compare(".ttf") == 0 || dot.compare(".woff2") == 0 || dot.compare(".woff") == 0)
+        return "application/octet-stream";
+    /*if (strcmp(dot, ".woff") == 0)
+        return "application/x-font-woff";*/
+    if (dot.compare(".svg") == 0)
+        return "image/svg+xml";
+    if (dot.compare(".js") == 0)
+        return "application/x-javascript";
+    /*if (strcmp(dot, ".woff2") == 0)
+        return "application/font-woff2";*/
+    if (dot.compare(".ico") == 0)
+        return "image/ico";
+    if (dot.compare(".mp4") == 0)
+        return "video/mp4";
+
+    return "text/plain; charset=utf-8";
 }
