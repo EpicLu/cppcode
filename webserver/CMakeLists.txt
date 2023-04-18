@@ -29,7 +29,7 @@ include_directories(include)
 
 # 设置源文件目录 使用GLOB可使用wilecard来获取源文件
 #file(GLOB THREADPOOL_SOURCES "src/*.cpp")
-set(REACTOR_SOURCES "src/reactor.cpp" "src/httphandler.cpp" "include/httphandler.h")
+set(REACTOR_SOURCES "src/reactor.cpp" "src/httphandler.cpp")
 set(THREADPOOL_SOURCES "src/threadpool.cpp" "src/task.cpp")
 set(WEBSERVER_SOURCES "src/webserver.cpp")
 set(MAIN_SOURCES "src/main.cpp")
