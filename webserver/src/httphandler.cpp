@@ -14,7 +14,8 @@ void HTTPHandler::handleEvent(int &fd, uint32_t &events)
     if (events & EPOLLIN)
     {
         // 如果此函数第一次运行 必定是服务器接受客户端请求 所以此时fd就是lfd
-        if (run_once)
+        static bool run_once = true; // 只会在第一次运行时初始化为true 第二次运行编译器会跳过此语句
+        if (__builtin_expect(run_once, 0))
         {
             run_once = false;
             listen_fd = fd;
@@ -23,7 +24,7 @@ void HTTPHandler::handleEvent(int &fd, uint32_t &events)
         if (fd != listen_fd)
             m_pool->addTask(&HTTPHandler::recvEvent, this, fd);
         else
-            m_pool->addTask(&HTTPHandler::acceptConn, this, fd);
+            m_pool->addTask(&HTTPHandler::acceptConn, this);
     }
     if (events & EPOLLOUT)
     {
@@ -173,4 +174,46 @@ void HTTPHandler::sendFile(int &fd)
 
     ifs.close();
     close(fd);
+}
+
+void HTTPHandler::acceptConn()
+{
+    struct sockaddr_in cin;
+    socklen_t len = sizeof(cin);
+
+    int cfd, i;
+    if ((cfd = accept(listen_fd, (struct sockaddr *)&cin, &len)) == -1)
+    {
+        if (errno != EAGAIN && errno != EINTR)
+        {
+            printf("%s:accept,%s\n", __func__, strerror(errno));
+            return;
+        }
+    }
+    do
+    {
+        if (i == MAX_EVENTS) // 超出连接数上限
+        {
+            printf("%s: max connect limit[%d]\n", __func__, MAX_EVENTS);
+            break;
+        }
+        int flag = 0;
+        if ((flag = fcntl(cfd, F_SETFL, O_NONBLOCK)) < 0) // 将cfd也设置为非阻塞
+        {
+            printf("%s: fcntl nonblocking failed, %s\n", __func__, strerror(errno));
+            break;
+        }
+
+        long opt = 16 * 1204 * 1204;
+        socklen_t optlen = sizeof(int);
+        setsockopt(cfd, SOL_SOCKET, SO_SNDBUF, &opt, sizeof(opt));
+        getsockopt(cfd, SOL_SOCKET, SO_SNDBUF, &opt, &optlen);
+        printf("===============================================================sendbufsize = %ld\n", opt);
+
+        std::unique_ptr<HTTPHandler> handler(new HTTPHandler(m_pool, m_reactor));
+        m_reactor->addHandler(std::move(handler), listen_fd, EPOLLIN | EPOLLET); // 设置为读事件挂树上监听
+    } while (0);
+
+    // printf("new connect[%s:%d],[time:%ld],pos[%d]\n\n", inet_ntoa(cin.sin_addr), ntohs(cin.sin_port), g_hev[i].mev.last_active, i);
+    return;
 }

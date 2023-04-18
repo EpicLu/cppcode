@@ -1,12 +1,8 @@
 #ifndef _WEBSERVER_H_
 #define _WEBSERVER_H_
 
-#include <fcntl.h>
-#include <arpa/inet.h>
 #include "threadpool.h"
 #include "reactor.h"
-
-#define MAX_EVENTS 1024
 
 class WebServer
 {

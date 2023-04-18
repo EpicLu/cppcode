@@ -25,9 +25,6 @@ private:
     Reactor *m_reactor;
     std::string m_filename; // 要发送的文件名
     int listen_fd;
-    static bool run_once;
 };
-
-bool HTTPHandler::run_once = true;
 
 #endif // _HTTPHANDLER_H_
