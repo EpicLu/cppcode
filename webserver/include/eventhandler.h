@@ -9,7 +9,7 @@ class EventHandler // 创建子类实现虚函数 子类可以是处理TCP的也
 public:
     virtual void handleEvent(int &fd, uint32_t &events) = 0; // 回调函数 需要创建子类实现
 
-    virtual ~EventHandler();
+    virtual ~EventHandler() = default;
 };
 
 #endif // _EVENTHANDLER_H_

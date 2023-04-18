@@ -14,6 +14,8 @@
 
 #define MAX_EVENTS 64
 
+class HTTPHandler;
+
 class Reactor
 {
 public:
