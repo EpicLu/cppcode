@@ -13,8 +13,17 @@ void HTTPHandler::handleEvent(int &fd, uint32_t &events)
 {
     if (events & EPOLLIN)
     {
+        // 如果此函数第一次运行 必定是服务器接受客户端请求 所以此时fd就是lfd
+        if (run_once)
+        {
+            run_once = false;
+            listen_fd = fd;
+        }
         // 将读回调函数加入线程池的工作线程
-        m_pool->addTask(&HTTPHandler::recvEvent, this, fd);
+        if (fd != listen_fd)
+            m_pool->addTask(&HTTPHandler::recvEvent, this, fd);
+        else
+            m_pool->addTask(&HTTPHandler::acceptConn, this, fd);
     }
     if (events & EPOLLOUT)
     {
