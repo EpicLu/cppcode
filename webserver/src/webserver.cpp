@@ -30,7 +30,7 @@ WebServer::~WebServer()
     }
 }
 
-void WebServer::initSocket(int port)
+void WebServer::initSocket(int &port)
 {
     int ret, i;
     int opt = 1;
@@ -71,4 +71,10 @@ void WebServer::initSocket(int port)
 
     std::unique_ptr<HTTPHandler> handler(new HTTPHandler(m_pool, m_reactor));
     m_reactor->addHandler(std::move(handler), lfd, EPOLLIN | EPOLLET);
+}
+
+void WebServer::startServer(int &port)
+{
+    initSocket(port);
+    m_reactor->handleEvent();
 }

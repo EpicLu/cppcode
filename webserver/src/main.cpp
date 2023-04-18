@@ -1,20 +1,23 @@
+#include <unistd.h>
 #include "webserver.h"
-
-void print()
-{
-    std::cout << "this is " << std::this_thread::get_id() << std::endl;
-}
-
-void runpool()
-{
-    ThreadPool t(4, 8, 4);
-    for (int i = 1; i <= 3; i++)
-        t.addTask(print);
-}
 
 int main(int argc, char **argv)
 {
-    runpool();
+    // 检查运行程序传入的参数
+    if (argc < 3)
+        printf("./main port path\n");
+
+    int port = atoi(argv[1]);
+
+    int ret = chdir(argv[2]); // 把工作目录改到web目录下
+    if (ret == -1)
+    {
+        printf("chdir error!");
+        exit(-1);
+    }
+
+    WebServer server(8, 16, 8);
+    server.startServer(port);
 
     return 0;
 }
