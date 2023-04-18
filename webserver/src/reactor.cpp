@@ -13,10 +13,14 @@ Reactor::Reactor()
 
 Reactor::~Reactor()
 {
+    // 置空智能指针让其销毁创建的对象
+    auto it = m_handlers.begin();
+    for (; it != m_handlers.end(); it++)
+        (it->second).reset();
     close(epoll_fd); // 关闭红黑树
 }
 
-void Reactor::addHandler(EventHandler *handler, int fd, uint32_t events)
+void Reactor::addHandler(std::unique_ptr<EventHandler> &&handler, int fd, uint32_t events)
 {
     struct epoll_event event;
     event.data.fd = fd;
@@ -26,7 +30,7 @@ void Reactor::addHandler(EventHandler *handler, int fd, uint32_t events)
         std::cerr << "Failed to add file descriptor to epoll\n";
         exit(1);
     }
-    m_handlers[fd] = handler;
+    m_handlers[fd] = std::move(handler);
 }
 
 void Reactor::delHandler(int fd)
@@ -53,9 +57,9 @@ void Reactor::handleEvent()
         {
             int fd = m_events[i].data.fd;
             uint32_t events = m_events[i].events;
-            auto handler = m_handlers[fd];
-            if (handler)
-                handler->handleEvent(fd, events); // 调用EventHandler类中的函数，此函数调用对应事件的回调函数
+            // auto handler = m_handlers[fd];
+            if (m_handlers[fd])
+                m_handlers[fd]->handleEvent(fd, events); // 调用EventHandler类中的函数，此函数调用对应事件的回调函数
         }
     }
 }

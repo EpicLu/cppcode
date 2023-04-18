@@ -114,7 +114,8 @@ void HTTPHandler::recvEvent(int &fd)
         m_filename = first.substr(pos + 1, first.find(" ", pos + 1) - pos - 1); // 第一个空格与第二个空格间
         m_filename = m_filename.substr(m_filename.find_first_of('/') + 1);      // 去掉开头的斜杠
         std::cout << "methos = " << methos << " file = " << m_filename << std::endl;
-        m_reactor->addHandler(this, fd, EPOLLOUT | EPOLLET); // 改成写事件重新挂回树上监听
+        std::unique_ptr<HTTPHandler> handler(new HTTPHandler(m_pool, m_reactor));
+        m_reactor->addHandler(std::move(handler), fd, EPOLLOUT | EPOLLET); // 改成写事件重新挂回树上监听
     }
     else if (methos == "POST")
     {

@@ -55,5 +55,6 @@ void WebServer::initSocket(int port)
         exit(1);
     }
 
-    m_reactor->addHandler(new HTTPHandler(m_pool, m_reactor), lfd, EPOLLIN | EPOLLET);
+    std::unique_ptr<HTTPHandler> handler(new HTTPHandler(m_pool, m_reactor));
+    m_reactor->addHandler(std::move(handler), lfd, EPOLLIN | EPOLLET);
 }
