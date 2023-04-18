@@ -16,6 +16,20 @@ WebServer::WebServer(int min_threads, int max_threads, int max_tasks)
     }
 }
 
+WebServer::~WebServer()
+{
+    if (m_pool != nullptr)
+    {
+        delete m_pool;
+        m_pool = nullptr;
+    }
+    if (m_reactor != nullptr)
+    {
+        delete m_reactor;
+        m_reactor = nullptr;
+    }
+}
+
 void WebServer::initSocket(int port)
 {
     int ret, i;

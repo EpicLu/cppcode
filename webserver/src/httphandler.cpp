@@ -9,6 +9,20 @@ HTTPHandler::HTTPHandler(ThreadPool *pool, Reactor *ptr)
     m_filename = "";
 }
 
+HTTPHandler::~HTTPHandler()
+{
+    if (m_pool != nullptr)
+    {
+        delete m_pool;
+        m_pool = nullptr;
+    }
+    if (m_reactor != nullptr)
+    {
+        delete m_reactor;
+        m_reactor = nullptr;
+    }
+}
+
 void HTTPHandler::handleEvent(int &fd, uint32_t &events)
 {
     if (events & EPOLLIN)

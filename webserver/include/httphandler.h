@@ -20,6 +20,8 @@ public:
     void sendFile(int &fd);                                             // 写事件的回调函数
     void acceptConn();
 
+    ~HTTPHandler();
+
 private:
     ThreadPool *m_pool;
     Reactor *m_reactor;
