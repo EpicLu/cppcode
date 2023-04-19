@@ -1,0 +1,4 @@
+#ifndef _HTTPRESPONSE_H_
+#define _HTTPRESPONSE_H_
+
+#endif // _HTTPRESPONSE_H_
