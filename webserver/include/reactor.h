@@ -23,6 +23,7 @@ public:
 
     void addHandler(std::unique_ptr<EventHandler> &&handler, int fd, uint32_t events); // 将事件挂到树上
     void delHandler(int fd);                                                           // 将事件从红黑树中摘除
+    void rmHandler(int fd);                                                            // 将事件从map中移除
     void handleEvent();                                                                // 监听事件
 
     ~Reactor();

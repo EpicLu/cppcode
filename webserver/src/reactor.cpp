@@ -40,7 +40,6 @@ void Reactor::delHandler(int fd)
         std::cerr << "Failed to remove file descriptor from epoll\n";
         exit(1);
     }
-    m_handlers.erase(fd);
 }
 
 void Reactor::handleEvent()
@@ -58,8 +57,13 @@ void Reactor::handleEvent()
             int fd = m_events[i].data.fd;
             uint32_t events = m_events[i].events;
             // auto handler = m_handlers[fd];
-            if (m_handlers[fd])
+            if (m_handlers[fd].get() != nullptr)
                 m_handlers[fd]->handleEvent(fd, events); // 调用EventHandler类中的函数，此函数调用对应事件的回调函数
         }
     }
+}
+
+void Reactor::rmHandler(int fd)
+{
+    m_handlers.erase(fd);
 }

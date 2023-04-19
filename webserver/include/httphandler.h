@@ -28,7 +28,7 @@ private:
     ThreadPool *m_pool;
     Reactor *m_reactor;
     std::string m_filename; // 要发送的文件名
-    int listen_fd;
+    static int listen_fd;
 };
 
 #endif // _HTTPHANDLER_H_

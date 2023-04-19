@@ -60,7 +60,7 @@ void ThreadPool::work()
         if (m_stop)
             break;
         // 判断是否需要销毁多余的线程
-        if (m_cur_threads > m_min_threads)
+        /*if (m_cur_threads > m_min_threads)
         {
             // 减少当前线程数目和空闲线程数目
             m_cur_threads--;
@@ -68,7 +68,7 @@ void ThreadPool::work()
             lock.unlock();
             // 当前线程结束
             break;
-        }
+        }*/
         // 取出任务
         task = std::move(tasks.front());
         tasks.pop();
