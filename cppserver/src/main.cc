@@ -2,13 +2,14 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:40:31
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-22 20:46:34
+ * @Last Modified time: 2023-04-23 00:06:44
  */
 
 #include "server/webserver.h"
-#include "pool/threadpool.hpp"
+#include "buffer/buffer.h"
 #include <iostream>
 #include <unistd.h>
+#include <fcntl.h>
 
 void test(int val)
 {
@@ -17,15 +18,17 @@ void test(int val)
 
 int main(int argc, char const *argv[])
 {
-    auto pool = ThreadPool::getInstance();
+    Buffer buf(BUFSIZ);
 
-    sleep(1);
+    int fd = open("README.md", O_RDONLY);
+    int err = 0;
 
-    pool->addTask(test, 7);
+    buf.readFd(fd, &err);
+    if (err == -1)
+        perror("read error! ");
 
-    sleep(1);
-
-    pool->shutdown();
+    std::string str = buf.to_string();
+    std::cout << str << std::endl;
 
     return 0;
 }
