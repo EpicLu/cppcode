@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:39:18
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-22 20:51:14
+ * @Last Modified time: 2023-04-22 21:44:58
  */
 
 #ifndef __THREADPOOL_HPP__
@@ -38,7 +38,7 @@ private:
     std::thread m_manager;                                    // 管理线程
     std::mutex m_locker;                                      // 互斥锁
     std::condition_variable m_cond;                           // 条件变量
-    std::atomic_bool m_finish;                                // 结束标志
+    bool m_finish;                                            // 结束标志
     std::unordered_map<std::thread::id, ThreadPtr> m_threads; // 工作线程按id存在map中
     std::queue<std::function<void()>> m_tasks;                // 包装函数的任务队列
 
