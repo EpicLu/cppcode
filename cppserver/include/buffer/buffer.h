@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:38:25
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-23 00:05:56
+ * @Last Modified time: 2023-04-23 03:08:02
  */
 
 #ifndef _BUFFER_H_
@@ -20,7 +20,7 @@ class Buffer
 {
     // Buffer的结构是([预留空间]+[读缓冲]+[写缓冲])组成的一个大的缓冲空间
 public:
-    Buffer(const int &bufsize = 1024); // 缺省1024
+    Buffer(const int &bufsize = 4096); // 缺省4096
     ~Buffer() = default;
 
     size_t writableBytes() const;    // 写缓冲大小
