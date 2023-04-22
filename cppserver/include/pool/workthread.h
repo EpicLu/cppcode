@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 19:00:02
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-22 19:48:33
+ * @Last Modified time: 2023-04-22 21:38:13
  */
 
 #ifndef __WORKTHREAD_H__
@@ -31,11 +31,11 @@ public:
     WorkThread(std::queue<std::function<void()>> &queue);
     ~WorkThread();
 
-    int getState() const;            // 获取线程状态
-    void finish();                   // 标记当前线程为finish状态
-    std::thread::id getTid();        // 获取线程ID
-    std::thread &getCurrentThread(); // 获取当前线程
-    void notify(const int &choice);  // 唤醒阻塞在条件变量上的线程
+    int getState() const;                  // 获取线程状态
+    void finish();                         // 标记当前线程为finish状态
+    std::thread::id getTid() const;        // 获取线程ID
+    const std::thread &getCurrentThread(); // 获取当前线程
+    void notify(const int &choice);        // 唤醒阻塞在条件变量上的线程
 
 private:
     void work();

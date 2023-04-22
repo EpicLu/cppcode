@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 20:21:02
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-22 20:49:53
+ * @Last Modified time: 2023-04-22 21:38:43
  */
 
 #include "pool/workthread.h"
@@ -59,13 +59,13 @@ int WorkThread::getState() const
     return m_state;
 }
 
-std::thread::id WorkThread::getTid()
+std::thread::id WorkThread::getTid() const
 {
     // return std::this_thread::get_id(); // 返回的是当前线程的id 不是工作线程的
     return m_thread.get_id();
 }
 
-std::thread &WorkThread::getCurrentThread()
+const std::thread &WorkThread::getCurrentThread()
 {
     return m_thread;
 }
