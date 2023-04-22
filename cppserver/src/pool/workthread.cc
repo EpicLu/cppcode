@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 20:21:02
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-22 21:38:43
+ * @Last Modified time: 2023-04-23 03:45:11
  */
 
 #include "pool/workthread.h"
@@ -29,14 +29,13 @@ void WorkThread::work()
         m_state = STATE_WAIT; // 线程每次开始工作都是默认为阻塞状态
 
         std::unique_lock<std::mutex> unilock(m_locker);
-        while (!m_finish && m_queue.empty())
-        {
-            m_cond.wait(unilock); // 任务队列为空 等待条件变量
-            // 判断是否是shutdown发来的信号
-            if (m_finish) // 也可以不写此判断 因为界发出销毁线程的信号时 会直接销毁当前对象
-                return;
-        }
-        // 若跳出循环即可执行任务
+
+        m_cond.wait(unilock); // 任务队列为空 等待条件变量
+
+        if (m_finish)
+            return;
+
+        // 执行任务
         auto task = m_queue.front();
         m_queue.pop();
         unilock.unlock();

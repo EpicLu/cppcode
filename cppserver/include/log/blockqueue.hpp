@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:39:00
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-23 03:40:10
+ * @Last Modified time: 2023-04-23 03:44:30
  */
 
 #ifndef _BLOCKQUEUE_H_
@@ -66,6 +66,20 @@ void BlockQueue<T>::close()
 };
 
 template <class T>
+T BlockQueue<T>::front()
+{
+    std::lock_guard<std::mutex> locker(m_locker);
+    return m_deque.front();
+}
+
+template <class T>
+T BlockQueue<T>::back()
+{
+    std::lock_guard<std::mutex> locker(m_locker);
+    return m_deque.back();
+}
+
+template <class T>
 size_t BlockQueue<T>::size()
 {
     std::lock_guard<std::mutex> locker(m_locker);
@@ -89,13 +103,13 @@ void BlockQueue<T>::clear()
 template <class T>
 void BlockQueue<T>::push_back(const T &item)
 {
-    {
-        std::unique_lock<std::mutex> locker(m_locker);
-        // 当队列关闭时或队列没满可继续执行
-        m_cond_productor.wait(locker, [this]() -> bool
-                              { return (m_deque.size() < m_capacity) || m_finish; });
 
-    } // lock作用域
+    std::unique_lock<std::mutex> locker(m_locker);
+    // 当队列关闭时或队列没满可继续执行
+    m_cond_productor.wait(locker, [this]() -> bool
+                          { return (m_deque.size() < m_capacity) || m_finish; });
+
+    locker.unlock();
     if (m_finish)
         return;
 
@@ -107,13 +121,13 @@ void BlockQueue<T>::push_back(const T &item)
 template <class T>
 void BlockQueue<T>::push_front(const T &item)
 {
-    {
-        std::unique_lock<std::mutex> locker(m_locker);
-        // 当队列关闭时或队列没满可继续执行
-        m_cond_productor.wait(locker, [this]() -> bool
-                              { return (m_deque.size() < m_capacity) || m_finish; });
 
-    } // lock作用域
+    std::unique_lock<std::mutex> locker(m_locker);
+    // 当队列关闭时或队列没满可继续执行
+    m_cond_productor.wait(locker, [this]() -> bool
+                          { return (m_deque.size() < m_capacity) || m_finish; });
+
+    locker.unlock();
     if (m_finish)
         return;
 
@@ -145,13 +159,12 @@ bool BlockQueue<T>::full()
 template <class T>
 bool BlockQueue<T>::pop(T &item)
 {
-    {
-        std::unique_lock<std::mutex> locker(m_locker);
-        // 当队列关闭时或队列非空可继续执行
-        m_cond_consumer.wait(locker, [this]() -> bool
-                             { return (!(m_deque.empty())) || m_finish; });
 
-    } // lock作用域
+    std::unique_lock<std::mutex> locker(m_locker);
+    // 当队列关闭时或队列非空可继续执行
+    m_cond_consumer.wait(locker, [this]() -> bool
+                         { return (!(m_deque.empty())) || m_finish; });
+    locker.unlock();
     if (m_finish)
         return;
 
@@ -165,14 +178,14 @@ bool BlockQueue<T>::pop(T &item)
 template <class T>
 bool BlockQueue<T>::pop(T &item, int timeout)
 {
-    {
-        std::unique_lock<std::mutex> locker(m_locker);
-        // 当队列关闭时或队列非空可继续执行 超时则关闭
-        if (m_cond_consumer.wait_for(locker, std::chrono::seconds(timeout), [this]() -> bool
-                                     { return (!(m_deque.empty())) || m_finish; }) == std::cv_status::timeout)
-            return false;
 
-    } // lock作用域
+    std::unique_lock<std::mutex> locker(m_locker);
+    // 当队列关闭时或队列非空可继续执行 超时则关闭
+    if (m_cond_consumer.wait_for(locker, std::chrono::seconds(timeout), [this]() -> bool
+                                 { return (!(m_deque.empty())) || m_finish; }) == std::cv_status::timeout)
+        return false;
+
+    locker.unlock();
     if (m_finish)
         return false;
 
