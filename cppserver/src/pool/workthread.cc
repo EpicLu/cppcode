@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 20:21:02
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-23 03:45:11
+ * @Last Modified time: 2023-04-23 03:48:11
  */
 
 #include "pool/workthread.h"
@@ -29,8 +29,9 @@ void WorkThread::work()
         m_state = STATE_WAIT; // 线程每次开始工作都是默认为阻塞状态
 
         std::unique_lock<std::mutex> unilock(m_locker);
-
-        m_cond.wait(unilock); // 任务队列为空 等待条件变量
+        // 任务队列为空 等待条件变量
+        m_cond.wait(unilock, [this]() -> bool
+                    { return !(m_queue.empty()) || m_finish; }); // 线程关闭和队列不为空可继续执行
 
         if (m_finish)
             return;
