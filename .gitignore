@@ -3,3 +3,4 @@ build
 lib
 .zip
 bin
+test
