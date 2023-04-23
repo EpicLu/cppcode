@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:39:00
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-23 03:44:30
+ * @Last Modified time: 2023-04-24 03:41:45
  */
 
 #ifndef _BLOCKQUEUE_H_
@@ -13,7 +13,6 @@
 #include <atomic>
 #include <sys/time.h>
 #include <condition_variable>
-#include "log.h"
 
 template <class T>
 class BlockQueue

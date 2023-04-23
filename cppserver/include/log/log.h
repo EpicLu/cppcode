@@ -22,6 +22,10 @@
 class Log
 {
 public:
+    // 单例模式删除拷贝构造
+    Log(const Log &log) = delete;
+    Log &operator=(const Log &log) = delete;
+
     // 初始化日志
     void init(int level, const char *path = "./log",
               const char *suffix = ".log",
@@ -43,9 +47,9 @@ private:
     void appendTitle(int level); // 根据级别定级
     void asyncWrite();           // 异步写日志
     // #define XXX
-    static const int LOG_PATH_LEN = 256;
-    static const int LOG_NAME_LEN = 256;
-    static const int MAX_LINES = 77777;
+    static constexpr int LOG_PATH_LEN = 256;
+    static constexpr int LOG_NAME_LEN = 256;
+    static constexpr int MAX_LINES = 77777;
 
     const char *m_path;   // 文件路径
     const char *m_suffix; // 后缀
