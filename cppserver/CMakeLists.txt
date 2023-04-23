@@ -69,6 +69,7 @@ add_executable(${TARGET} ${MAIN_SOURCES})
 # 生成可执行文件main，需要把连接库给带上，添加库文件名不需要指定文件路径，cmake会自己找
 #target_link_libraries(reactor INTERFACE threadpool)
 #target_link_libraries(webserver PUBLIC threadpool)
+target_link_libraries(log INTERFACE buffer)
 target_link_libraries(server PUBLIC ${PROJECT_LINK_LIBS})
 target_link_libraries(${TARGET} server) 
 

@@ -6,29 +6,23 @@
  */
 
 #include "server/webserver.h"
-#include "buffer/buffer.h"
+#include "log/log.h"
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
 
-void test(int val)
+int brithDay()
 {
-    printf("val = %d\n", val);
+    return 1206;
 }
 
 int main(int argc, char const *argv[])
 {
-    Buffer buf(BUFSIZ);
+    Log::getInstance()->init(0, "./log", ".log", 1024);
+    for (size_t i = 0; i < 77777; i++)
+        LOG_INFO("lpc %d", brithDay());
 
-    int fd = open("README.md", O_RDONLY);
-    int err = 0;
-
-    buf.readFd(fd, &err);
-    if (err == -1)
-        perror("read error! ");
-
-    std::string str = buf.to_string();
-    std::cout << str << std::endl;
+    sleep(3);
 
     return 0;
 }

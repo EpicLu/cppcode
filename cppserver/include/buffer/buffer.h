@@ -31,6 +31,15 @@ public:
     char *peek();             // 可写
     const char *peek() const; // 只读
 
+    // writepos的所在位置
+    char *beginWrite();
+    const char *beginWrite() const;
+
+    void retrieve(const size_t &len);    // 更新读数据的起始pos（回收空间）
+    void retrieveUntil(const char *end); // 更新pos到指定位置（回收空间）
+    void retrieveAll();                  // 回收所有空间 pos置0
+    void hasWritten(const size_t &len);  // 更新写数据的起始pos
+
     std::string to_string(); // 数据内容转string
 
     // 向往写缓冲加data && 它的重载
@@ -47,14 +56,7 @@ private:
     // 起始位置
     char *begin();
     const char *begin() const;
-    // writepos的所在位置
-    char *beginWrite();
-    const char *beginWrite() const;
 
-    void retrieve(const size_t &len);       // 更新读数据的起始pos（回收空间）
-    void retrieveUntil(const char *end);    // 更新pos到指定位置（回收空间）
-    void retrieveAll();                     // 回收所有空间 pos置0
-    void hasWritten(const size_t &len);     // 更新写数据的起始pos
     void ensureWritable(const size_t &len); // 确保写缓冲够大
     void makeSpace(const size_t &len);      // 扩容
 

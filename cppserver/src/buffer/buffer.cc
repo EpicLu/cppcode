@@ -36,28 +36,29 @@ const char *Buffer::peek() const
 
 void Buffer::retrieve(const size_t &len)
 {
-    assert(len <= readableBytes());
+    assert(len <= (m_writepos - m_readpos) /*readableBytes()*/);
 
     m_readpos += len;
 }
 
 void Buffer::retrieveUntil(const char *end)
 {
-    assert(peek() <= end);
+    assert(/*peek()*/ begin() + m_readpos <= end);
 
-    retrieve(end - peek());
+    retrieve(end - begin() + m_readpos /*peek()*/);
 }
 
 void Buffer::retrieveAll()
 {
-    bzero(&m_buffer[0], m_buffer.size());
+    // bzero(&m_buffer[0], m_buffer.size());
+    memset(&m_buffer[0], '0', m_buffer.size());
     m_readpos = 0;
     m_writepos = 0;
 }
 
 std::string Buffer::to_string()
 {
-    size_t readable = readableBytes();
+    size_t readable = m_writepos - m_readpos /*readableBytes()*/;
     std::string str(peek(), readable);
     // retrieveAll();
 
@@ -82,18 +83,19 @@ void Buffer::hasWritten(const size_t &len)
 void Buffer::ensureWritable(const size_t &len)
 {
     // 如果剩余写缓冲小于len 扩容
-    if (writableBytes() < len)
+    if (/*writable*/ m_buffer.size() - m_writepos < len)
         makeSpace(len);
 
-    assert(writableBytes() >= len);
+    assert(/*writable*/ m_buffer.size() - m_writepos >= len);
 }
 
 void Buffer::append(const char *data, const size_t &len)
 {
     assert(data);
     ensureWritable(len);
-    std::copy(data, data + len, beginWrite());
-    hasWritten(len);
+    std::copy(data, data + len, begin() + m_writepos /*beginWrite()*/);
+    // hasWritten(len);
+    m_writepos += len;
 }
 
 void Buffer::append(const std::string &data)
@@ -116,7 +118,7 @@ ssize_t Buffer::readFd(const int &fd, int *errorno)
 {
     char buf[65536];
     struct iovec iov[2]; // sys/uio.h
-    const size_t writable = writableBytes();
+    const size_t writable = m_buffer.size() - m_writepos /*writableBytes()*/;
 
     // Buffer缓冲
     iov[0].iov_base = begin() + m_writepos;
@@ -129,7 +131,7 @@ ssize_t Buffer::readFd(const int &fd, int *errorno)
     if (len < 0)
         *errorno = errno; // 错误号给参数保存
     else if (static_cast<size_t>(len) <= writable)
-        hasWritten(len); // 更新writepos
+        m_writepos += len;
     else
     {
         // 写缓冲不够大 剩余数据在readv中被存入临时buf 需要将临时buf中的数据再写入Buffer的写缓冲
@@ -142,9 +144,9 @@ ssize_t Buffer::readFd(const int &fd, int *errorno)
 
 ssize_t Buffer::writeFd(const int &fd, int *errorno)
 {
-    const size_t readable = readableBytes();
+    const size_t readable = m_writepos - m_readpos /*readableBytes()*/;
 
-    ssize_t len = write(fd, peek(), readable);
+    ssize_t len = write(fd, /*peek()*/ begin() + m_readpos, readable);
     if (len < 0)
     {
         *errorno = errno; // 错误号给参数保存
@@ -169,15 +171,15 @@ const char *Buffer::begin() const
 
 void Buffer::makeSpace(const size_t &len)
 {
-    if (writableBytes() + prependableBytes() < len)
+    if (/*writableBytes()*/ m_buffer.size() - m_writepos + /*prependableBytes()*/ m_readpos < len)
         m_buffer.resize(m_writepos + len + 1); // 比原来大len+1
     else
     {
-        const size_t readable = readableBytes();
-        std::copy(peek(), beginWrite(), begin()); // 预留空间登场
+        const size_t readable = m_writepos - m_readpos /*readableBytes()*/;
+        std::copy(peek(), /*beginWrite()*/ begin() + m_writepos, /*begin()*/ begin() + m_readpos); // 预留空间登场
         m_readpos = 0;
         m_writepos = m_readpos + readable;
 
-        assert(readable == readableBytes());
+        assert(readable == m_writepos - m_readpos /*readableBytes()*/);
     }
 }

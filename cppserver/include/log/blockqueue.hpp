@@ -166,7 +166,7 @@ bool BlockQueue<T>::pop(T &item)
                          { return (!(m_deque.empty())) || m_finish; });
     locker.unlock();
     if (m_finish)
-        return;
+        return false;
 
     item = m_deque.front();
     m_deque.pop_front();
@@ -180,7 +180,7 @@ bool BlockQueue<T>::pop(T &item, int timeout)
 {
 
     std::unique_lock<std::mutex> locker(m_locker);
-    // 当队列关闭时或队列非空可继续执行 超时则关闭
+    // 当队列关闭时或队列非空可继续执行 超时则关闭并返回false
     if (m_cond_consumer.wait_for(locker, std::chrono::seconds(timeout), [this]() -> bool
                                  { return (!(m_deque.empty())) || m_finish; }) == std::cv_status::timeout)
         return false;
