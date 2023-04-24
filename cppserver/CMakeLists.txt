@@ -6,7 +6,7 @@ project(server)
 set(CMAKE_BUILD_TYPE Debug)
 
 # 配置编译选项
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread -lmysqlclient")
 set(CMAKE_CXX_STANDARD 17)
 
 # 设置二进制文件目录 默认为当前目录的build -> ./build
