@@ -1,6 +1,11 @@
 # cpp
 project(server)
 
+# 设置CMP0003策略 否则连接mysql库会有警告
+if(COMMAND cmake_policy) 
+cmake_policy(SET CMP0003 NEW) 
+endif(COMMAND cmake_policy)
+
 # 配置构建类型
 #set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_BUILD_TYPE Debug)
@@ -71,7 +76,6 @@ add_executable(${TARGET} ${MAIN_SOURCES})
 #target_link_libraries(webserver PUBLIC threadpool)
 target_link_libraries(log PUBLIC buffer)
 target_link_libraries(pool PUBLIC log)
-target_link_libraries(pool PUBLIC mysqlclient)
 target_link_libraries(server PUBLIC ${PROJECT_LINK_LIBS})
 target_link_libraries(${TARGET} server) 
 
