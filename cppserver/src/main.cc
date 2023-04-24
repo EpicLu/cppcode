@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:40:31
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-23 00:06:44
+ * @Last Modified time: 2023-04-24 18:53:45
  */
 
 #include "server/webserver.h"
@@ -19,7 +19,7 @@ int brithDay()
 int main(int argc, char const *argv[])
 {
     Log::getInstance()->init(0, "./log", ".log", 1024);
-    for (size_t i = 0; i < 77777; i++)
+    for (size_t i = 0; i < 5000; i++)
         LOG_INFO("lpc %d", brithDay());
 
     sleep(3);

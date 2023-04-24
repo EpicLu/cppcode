@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:39:05
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-23 00:27:00
+ * @Last Modified time: 2023-04-24 18:59:47
  */
 
 #ifndef _LOG_H_
@@ -49,7 +49,7 @@ private:
     // #define XXX
     static constexpr int LOG_PATH_LEN = 256;
     static constexpr int LOG_NAME_LEN = 256;
-    static constexpr int MAX_LINES = 77777;
+    static constexpr int MAX_LINES = 60000;
 
     const char *m_path;   // 文件路径
     const char *m_suffix; // 后缀

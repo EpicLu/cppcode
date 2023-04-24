@@ -1,8 +1,8 @@
 /*
  * @Author: EpicLu
  * @Date: 2023-04-22 18:40:11
- * @Last Modified by:   EpicLu
- * @Last Modified time: 2023-04-22 18:40:11
+ * @Last Modified by: EpicLu
+ * @Last Modified time: 2023-04-24 18:53:04
  */
 
 #include "pool/sqlpool.h"
@@ -46,7 +46,7 @@ MYSQL *SqlPool::connect()
     MYSQL *sql = nullptr;
     if (m_conns.empty())
     {
-        LOG_WARN("SqlConnPool busy!");
+        LOG_WARN("SqlPool busy");
         return nullptr;
     }
     sem_wait(&m_sem_id); // conn_count--;
