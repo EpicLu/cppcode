@@ -71,6 +71,7 @@ add_executable(${TARGET} ${MAIN_SOURCES})
 #target_link_libraries(webserver PUBLIC threadpool)
 target_link_libraries(log PUBLIC buffer)
 target_link_libraries(pool PUBLIC log)
+target_link_libraries(pool PUBLIC mysqlclient)
 target_link_libraries(server PUBLIC ${PROJECT_LINK_LIBS})
 target_link_libraries(${TARGET} server) 
 

@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:40:11
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-24 18:53:04
+ * @Last Modified time: 2023-04-24 19:39:11
  */
 
 #include "pool/sqlpool.h"
@@ -35,6 +35,7 @@ void SqlPool::init(const char *host, int port,
         if (!sql)
             LOG_ERROR("mysql connect error");
         // else
+        // LOG_INFO("mysql connect %s:%d user:%s db:%s", host, port, user, db);
         m_conns.emplace(sql);
     }
     // 信号量初始化

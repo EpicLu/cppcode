@@ -2,11 +2,10 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:40:31
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-04-24 18:53:45
+ * @Last Modified time: 2023-04-24 19:39:28
  */
 
 #include "server/webserver.h"
-#include "log/log.h"
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
@@ -18,11 +17,6 @@ int brithDay()
 
 int main(int argc, char const *argv[])
 {
-    Log::getInstance()->init(0, "./log", ".log", 1024);
-    for (size_t i = 0; i < 5000; i++)
-        LOG_INFO("lpc %d", brithDay());
-
-    sleep(3);
 
     return 0;
 }
