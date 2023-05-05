@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:38:37
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-05 21:48:38
+ * @Last Modified time: 2023-05-05 21:50:24
  */
 
 #ifndef __HTTPCONN_H__
@@ -19,15 +19,15 @@
 #include "httprequest.h"
 #include "httpresponse.h"
 
-class httpconn
+class HttpConn
 {
 public:
-    httpconn();
-    ~httpconn();
+    HttpConn();
+    ~HttpConn();
 
 private:
     int m_fd;
-    int m_iov_cnt;
+    int m_iov_count;
     bool m_close;
 
     struct sockaddr_in m_addr;
