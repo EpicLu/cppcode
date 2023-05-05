@@ -2,26 +2,26 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:40:00
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-06 00:28:23
+ * @Last Modified time: 2023-05-06 00:47:47
  */
 
 #include "http/httprequest.h"
 
 const std::unordered_set<std::string>
-    HttpRequest::DEFAULT_HTML{
+    HttpRequest::DEFAULT_HTML = {
         "/index",
         "/register",
         "/login",
         "/welcome",
         "/video",
         "/picture",
-    };
+};
 
 const std::unordered_map<std::string, int>
-    HttpRequest::DEFAULT_HTML_TAG{
+    HttpRequest::DEFAULT_HTML_TAG = {
         {"/register.html", 0},
         {"/login.html", 1},
-    };
+};
 
 HttpRequest::HttpRequest()
 {
