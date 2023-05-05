@@ -2,18 +2,17 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:39:23
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-05 17:33:10
+ * @Last Modified time: 2023-05-05 17:35:52
  */
 
 #ifndef _EPOLLER_H_
 #define _EPOLLER_H_
 
 #include <sys/epoll.h>
-#include <fcntl.h>
 #include <unistd.h>
 #include <assert.h>
-#include <vector>
 #include <errno.h>
+#include <vector>
 
 class Epoller
 {
