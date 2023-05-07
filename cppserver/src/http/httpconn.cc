@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:39:56
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-07 19:02:10
+ * @Last Modified time: 2023-05-07 19:09:39
  */
 
 #include "http/httpconn.h"
@@ -46,7 +46,7 @@ void HttpConn::disconncet()
         m_close = true;
         m_use_count--;
         close(m_fd);
-        LOG_INFO("Client[%d](%s:%d) quit, UserCount:%d", m_fd, getIP(), getPort(), (int)m_use_count);
+        LOG_INFO("Client[%d](%s:%d) quit, user_count:%d", m_fd, getIP(), getPort(), (int)m_use_count);
     }
 }
 

@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:38:37
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-07 18:52:14
+ * @Last Modified time: 2023-05-07 19:11:37
  */
 
 #ifndef __HTTPCONN_H__
@@ -25,12 +25,13 @@ public:
     HttpConn();
     ~HttpConn();
 
-    void init(int sockFd, const sockaddr_in &addr);
-    void disconncet();
-    ssize_t read(int *saveErrno);
-    ssize_t write(int *saveErrno);
-    bool process();
+    void init(int sockFd, const sockaddr_in &addr); // 初始化
+    void disconncet();                              // 与客户端断开连接
+    ssize_t read(int *saveErrno);                   // 读Http请求到Buffer中
+    ssize_t write(int *saveErrno);                  // 发应答（和文件）给浏览器
+    bool process();                                 // 处理读到的请求
 
+    // 函数名对应函数的作用 函数就一个return 用内联减少栈调用
     inline int toWriteBytes() { return m_iov[0].iov_len + m_iov[1].iov_len; }
     inline bool isKeepAlive() const { return m_request->isKeepAlive(); }
     inline int getFd() const { return m_fd; }
