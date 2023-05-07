@@ -45,7 +45,7 @@ void Buffer::retrieveUntil(const char *end)
 {
     assert(/*peek()*/ begin() + m_readpos <= end);
 
-    retrieve(end - begin() + m_readpos /*peek()*/);
+    retrieve(end - (begin() + m_readpos) /*peek()*/);
 }
 
 void Buffer::retrieveAll()
@@ -127,11 +127,16 @@ ssize_t Buffer::readFd(const int &fd, int *errorno)
     iov[1].iov_base = buf;
     iov[1].iov_len = sizeof(buf);
 
-    const ssize_t len = readv(fd, iov, 2);
+    ssize_t len = readv(fd, iov, 2);
+
     if (len < 0)
+    {
         *errorno = errno; // 错误号给参数保存
+    }
     else if (static_cast<size_t>(len) <= writable)
+    {
         m_writepos += len;
+    }
     else
     {
         // 写缓冲不够大 剩余数据在readv中被存入临时buf 需要将临时buf中的数据再写入Buffer的写缓冲

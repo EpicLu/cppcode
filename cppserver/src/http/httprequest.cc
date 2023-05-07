@@ -122,7 +122,7 @@ bool HttpRequest::parseHeader(const std::string &line)
         m_state = REQUEST_LINE;
         return true;
     }
-    LOG_ERROR("RequestLine Error arg:line=%s", line.c_str());
+    LOG_ERROR("header error arg:\"line\" is %s", line.c_str());
 
     return false;
 }
@@ -253,8 +253,12 @@ bool HttpRequest::verifyUser(const std::string &name, const std::string &pwd, bo
     bool flag = false;
     char order[256] = {0};
 
+    // 注册
     if (!isLogin)
-        flag = true;
+    {
+        flag = registerUser(name, pwd, sql);
+        return flag;
+    }
 
     // 查询用户
     snprintf(order, 256, "SELECT username, password FROM user WHERE username='%s' LIMIT 1", name.c_str());
@@ -262,23 +266,10 @@ bool HttpRequest::verifyUser(const std::string &name, const std::string &pwd, bo
 
     if (mysql_query(sql, order))
     {
-        LOG_DEBUG("sql search error");
+        LOG_DEBUG("sql search error: %s", mysql_error(sql));
         return false;
     }
-
-    if (isLogin)
-    {
-        flag = verifyPassword(sql, pwd);
-    }
-    else
-    {
-        flag = false;
-        LOG_DEBUG("user had been used");
-    }
-
-    // 注册
-    if (!isLogin && flag == true)
-        flag = registerUser(name, pwd, sql);
+    flag = verifyPassword(sql, pwd);
 
     if (flag)
         LOG_DEBUG("userVerify success");
@@ -312,7 +303,7 @@ bool HttpRequest::registerUser(const std::string &name, const std::string &pwd, 
 {
     char order[256] = {0};
 
-    LOG_DEBUG("regirster");
+    LOG_DEBUG("regirster now");
     bzero(order, 256);
     snprintf(order, 256, "INSERT INTO user(username, password) VALUES('%s','%s')", name.c_str(), pwd.c_str());
     LOG_DEBUG("%s", order);

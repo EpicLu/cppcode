@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:39:56
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-07 19:09:39
+ * @Last Modified time: 2023-05-07 21:13:34
  */
 
 #include "http/httpconn.h"
@@ -14,16 +14,16 @@ bool HttpConn::m_ET;
 HttpConn::HttpConn()
     : m_fd(-1), m_close(true), m_iov_count(0)
 {
-    m_readbuf = nullptr;
-    m_writebuf = nullptr;
-    m_request = nullptr;
-    m_response = nullptr;
+    m_readbuf = std::make_shared<Buffer>(BUFSIZ);
+    m_writebuf = std::make_shared<Buffer>(BUFSIZ);
+    m_request = std::make_unique<HttpRequest>();
+    m_response = std::make_unique<HttpResponse>();
     m_addr = {0};
 }
 
 HttpConn::~HttpConn()
 {
-    disconncet();
+    disconnect();
 };
 
 void HttpConn::init(int fd, const sockaddr_in &addr)
@@ -38,7 +38,7 @@ void HttpConn::init(int fd, const sockaddr_in &addr)
     LOG_INFO("Client[%d](%s:%d) in, use_count:%d", m_fd, getIP(), getPort(), (int)m_use_count);
 }
 
-void HttpConn::disconncet()
+void HttpConn::disconnect()
 {
     munmap(m_response->file(), m_response->fileSize());
     if (m_close == false)

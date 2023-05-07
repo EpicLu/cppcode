@@ -37,18 +37,20 @@ void WorkThread::work()
             return;
 
         // 执行任务
-        auto task = m_queue.front();
+        std::function<void()> task = m_queue.front();
         m_queue.pop();
         unilock.unlock();
 
-        if (task != nullptr)
+        if (task)
         {
             m_state = STATE_WORK;
             // std::cout << "thread " << std::this_thread::get_id() << " is runing task!\n";
             task();
         }
         else
+        {
             std::cout << "thread " << std::this_thread::get_id() << " task is null!\n";
+        }
     }
     // 跳出循环 说明线程结束
     m_state = STATE_EXIT;
