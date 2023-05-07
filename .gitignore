@@ -4,4 +4,4 @@ lib
 .zip
 bin
 test
-log
+webserverlog

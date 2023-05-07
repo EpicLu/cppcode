@@ -31,7 +31,7 @@ WebServer::WebServer(
 
     if (openLog)
     {
-        Log::getInstance()->init(logLevel, "./log", ".log", logQueSize);
+        Log::getInstance()->init(logLevel, "./webserverlog", ".log", logQueSize);
         if (m_close)
         {
             LOG_ERROR("========== Server init error!==========");
