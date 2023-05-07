@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:38:53
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-06 01:21:18
+ * @Last Modified time: 2023-05-07 18:56:56
  */
 
 #ifndef _HTTPRESPONSE_H_
@@ -23,16 +23,17 @@ public:
     ~HttpResponse();
 
     void init(const std::string &srcDir, std::string &path, bool isKeepAlive = false, int code = -1);
-    void errorContent(Buffer &buf, std::string message);
-    void makeResponse(Buffer &buf);
-    char *file();
-    size_t fileSize() const;
-    int code() const;
+    void errorContent(std::shared_ptr<Buffer> buf, std::string message);
+    void makeResponse(std::shared_ptr<Buffer> buf);
+
+    inline char *file() { return m_file; };
+    inline size_t fileSize() const { return m_stat.st_size; };
+    inline int code() const { return m_code; };
 
 private:
-    void addStateLine(Buffer &buf);
-    void addHeader(Buffer &buf);
-    void addContent(Buffer &buf);
+    void addStateLine(std::shared_ptr<Buffer> buf);
+    void addHeader(std::shared_ptr<Buffer> buf);
+    void addContent(std::shared_ptr<Buffer> buf);
     void errorHtml();
     std::string getFileType();
 

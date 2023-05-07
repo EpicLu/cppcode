@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:36:39
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-06 01:38:42
+ * @Last Modified time: 2023-05-07 18:56:01
  */
 
 #include "http/httpresponse.h"
@@ -82,7 +82,7 @@ void HttpResponse::init(const std::string &srcDir, std::string &path,
     m_src_dir = srcDir;
 }
 
-void HttpResponse::makeResponse(Buffer &buf)
+void HttpResponse::makeResponse(std::shared_ptr<Buffer> buf)
 {
     /* 判断请求的资源文件 */
     if (stat((m_src_dir + m_path).data(), &m_stat) < 0 || S_ISDIR(m_stat.st_mode))
@@ -113,7 +113,7 @@ void HttpResponse::errorHtml()
     }
 }
 
-void HttpResponse::addStateLine(Buffer &buf)
+void HttpResponse::addStateLine(std::shared_ptr<Buffer> buf)
 {
     std::string status;
     if (CODE_STATUS.count(m_code) == 1)
@@ -125,26 +125,26 @@ void HttpResponse::addStateLine(Buffer &buf)
         m_code = 400;
         status = CODE_STATUS.find(400)->second;
     }
-    buf.append("HTTP/1.1 " + std::to_string(m_code) + " " + status + "\r\n");
+    buf->append("HTTP/1.1 " + std::to_string(m_code) + " " + status + "\r\n");
 }
 
-void HttpResponse::addHeader(Buffer &buf)
+void HttpResponse::addHeader(std::shared_ptr<Buffer> buf)
 {
-    buf.append("Connection: ");
+    buf->append("Connection: ");
     if (m_keep_alive)
     {
-        buf.append("keep-alive\r\n");
-        buf.append("keep-alive: max=6, timeout=120\r\n");
+        buf->append("keep-alive\r\n");
+        buf->append("keep-alive: max=6, timeout=120\r\n");
     }
     else
     {
-        buf.append("close\r\n");
+        buf->append("close\r\n");
     }
-    buf.append("Content-type: " + getFileType() + "\r\n");
+    buf->append("Content-type: " + getFileType() + "\r\n");
     // buf.append("Content-Encoding: " + "deflate" + "\r\n");
 }
 
-void HttpResponse::addContent(Buffer &buf)
+void HttpResponse::addContent(std::shared_ptr<Buffer> buf)
 {
     int srcFd = open((m_src_dir + m_path).data(), O_RDONLY);
     if (srcFd < 0)
@@ -165,7 +165,7 @@ void HttpResponse::addContent(Buffer &buf)
     m_file = (char *)mmRet;
 
     close(srcFd);
-    buf.append("Content-length: " + std::to_string(m_stat.st_size) + "\r\n\r\n");
+    buf->append("Content-length: " + std::to_string(m_stat.st_size) + "\r\n\r\n");
 }
 
 std::string HttpResponse::getFileType()
@@ -183,7 +183,7 @@ std::string HttpResponse::getFileType()
     return "text/plain";
 }
 
-void HttpResponse::errorContent(Buffer &buf, std::string message)
+void HttpResponse::errorContent(std::shared_ptr<Buffer> buf, std::string message)
 {
     std::string body;
     std::string status;
@@ -201,21 +201,6 @@ void HttpResponse::errorContent(Buffer &buf, std::string message)
     body += "<p>" + message + "</p>";
     body += "<hr><em>TinyWebServer</em></body></html>";
 
-    buf.append("Content-length: " + std::to_string(body.size()) + "\r\n\r\n");
-    buf.append(body);
-}
-
-char *HttpResponse::file()
-{
-    return m_file;
-}
-
-size_t HttpResponse::fileSize() const
-{
-    return m_stat.st_size;
-}
-
-int HttpResponse::code() const
-{
-    return m_code;
+    buf->append("Content-length: " + std::to_string(body.size()) + "\r\n\r\n");
+    buf->append(body);
 }

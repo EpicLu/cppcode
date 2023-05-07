@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:38:48
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-06 00:36:22
+ * @Last Modified time: 2023-05-07 18:58:48
  */
 
 #ifndef _HTTPREQUEST_H_
@@ -35,14 +35,15 @@ public:
     ~HttpRequest() = default;
 
     void init();                                       // 初始化成员变量
-    bool parse(Buffer &buf);                           // 处理http请求
+    bool parse(std::shared_ptr<Buffer> buf);           // 处理http请求
     bool isKeepAlive() const;                          // connection是否是keep-alive
-    std::string path() const;                          // 返回m_path
-    std::string &path();                               // 返回m_path
-    std::string method() const;                        // 返回m_method
-    std::string version() const;                       // 返回m_version
     std::string getPost(const std::string &key) const; // 获取post表单内容
     std::string getPost(const char *key) const;        // 获取post表单内容
+
+    inline std::string path() const { return m_path; };       // 返回m_path
+    inline std::string &path() { return m_path; };            // 返回m_path
+    inline std::string method() const { return m_method; };   // 返回m_method
+    inline std::string version() const { return m_version; }; // 返回m_version
 
 private:
     bool parseHeader(const std::string &line);      // 处理请求首行

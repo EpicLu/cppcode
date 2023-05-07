@@ -2,7 +2,7 @@
  * @Author: EpicLu
  * @Date: 2023-04-22 18:40:00
  * @Last Modified by: EpicLu
- * @Last Modified time: 2023-05-06 00:47:47
+ * @Last Modified time: 2023-05-07 18:58:16
  */
 
 #include "http/httprequest.h"
@@ -39,18 +39,18 @@ void HttpRequest::init()
     m_post.reserve(16);
 }
 
-bool HttpRequest::parse(Buffer &buf)
+bool HttpRequest::parse(std::shared_ptr<Buffer> buf)
 {
     const char CRLF[] = "\r\n";
-    if (buf.readableBytes() <= 0)
+    if (buf->readableBytes() <= 0)
     {
         return false;
     }
-    while (buf.readableBytes() && m_state != FINISH)
+    while (buf->readableBytes() && m_state != FINISH)
     {
         // 获取Http请求头的行
-        char *lineEnd = std::search(buf.peek(), buf.beginWrite(), CRLF, CRLF + 2);
-        std::string line(buf.peek(), lineEnd);
+        char *lineEnd = std::search(buf->peek(), buf->beginWrite(), CRLF, CRLF + 2);
+        std::string line(buf->peek(), lineEnd);
 
         switch (m_state)
         {
@@ -64,7 +64,7 @@ bool HttpRequest::parse(Buffer &buf)
         case REQUEST_LINE:
             parseRequestLine(line);
 
-            if (buf.readableBytes() <= 2) // "\r\n"
+            if (buf->readableBytes() <= 2) // "\r\n"
                 m_state = FINISH;
 
             break;
@@ -77,10 +77,10 @@ bool HttpRequest::parse(Buffer &buf)
             break;
         }
 
-        if (lineEnd == buf.beginWrite()) // 读完了
+        if (lineEnd == buf->beginWrite()) // 读完了
             break;
 
-        buf.retrieveUntil(lineEnd + 2);
+        buf->retrieveUntil(lineEnd + 2);
     }
     LOG_DEBUG("[%s], [%s], [%s]", m_method.c_str(), m_path.c_str(), m_version.c_str());
 
@@ -324,26 +324,6 @@ bool HttpRequest::registerUser(const std::string &name, const std::string &pwd, 
     }
 
     return true;
-}
-
-std::string HttpRequest::path() const
-{
-    return m_path;
-}
-
-std::string &HttpRequest::path()
-{
-    return m_path;
-}
-
-std::string HttpRequest::method() const
-{
-    return m_method;
-}
-
-std::string HttpRequest::version() const
-{
-    return m_version;
 }
 
 int HttpRequest::converHex(char ch)
