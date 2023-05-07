@@ -78,7 +78,14 @@ bool HttpRequest::parse(std::shared_ptr<Buffer> buf)
         }
 
         if (lineEnd == buf->beginWrite()) // 读完了
+        {
+            // 当方法为POST时 表单数据会残留在buffer中
+            // 所以用下面判断来读完表单的数据
+            if (m_method == "POST")
+                buf->retrieveUntil(lineEnd);
+
             break;
+        }
 
         buf->retrieveUntil(lineEnd + 2);
     }
